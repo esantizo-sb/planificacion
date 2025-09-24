@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planificador de Clases Dinámico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        /* Estilos para la barra de progreso */
+        .progress-bar-container {
+            position: relative;
+            height: 20px;
+            background-color: #e5e7eb;
+            border-radius: 9999px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #3b82f6;
+            transition: width 0.5s ease-in-out;
+            border-radius: 9999px;
+        }
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: 600;
+            font-size: 0.75rem;
+            color: #1f2937;
+            mix-blend-mode: exclusion;
+            filter: invert(1) grayscale(1);
+        }
+        .custom-file-upload {
+            border: 2px dashed #d1d5db;
+            display: inline-block;
+            padding: 6px 12px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+        .custom-file-upload:hover {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+        }
+        input[type="file"] {
+            display: none;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 140px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -70px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Estilos para responsividad de la tabla */
+        @media screen and (max-width: 768px) {
+            .responsive-table thead {
+                display: none;
+            }
+            .responsive-table tr {
+                display: block;
+                margin-bottom: 1.5rem;
+                border: 1px solid #ddd;
+                border-radius: 0.5rem;
+                padding: 1rem;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+            .responsive-table td {
+                display: block;
+                text-align: right;
+                border-bottom: 1px dotted #ccc;
+                padding: 0.5rem 0;
+            }
+            .responsive-table td:last-child {
+                border-bottom: none;
+            }
+            .responsive-table td::before {
+                content: attr(data-label);
+                float: left;
+                font-weight: bold;
+                text-transform: uppercase;
+                font-size: 0.8em;
+                color: #374151;
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+        
+        <!-- Encabezado y Gamificación -->
+        <header class="mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Planificador de Clases Dinámico</h1>
+            <p class="text-gray-600 mt-2">Completa todos los campos para finalizar tu planificación. ¡Tú puedes!</p>
+            
+            <div class="mt-4">
+                <label for="progress" class="block text-sm font-medium text-gray-700 mb-1">Progreso de Planificación</label>
+                <div class="progress-bar-container">
+                    <div id="progressBar" class="progress-bar"></div>
+                    <span id="progressText" class="progress-text">0%</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Formulario Principal -->
+        <main class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+
+            <!-- Sección de Datos Generales -->
+            <section class="border-b border-gray-200 pb-8">
+                <div class="flex flex-col md:flex-row items-center gap-6">
+                    <div class="text-center">
+                        <img id="schoolLogo" src="https://placehold.co/100x100/3b82f6/white?text=Logo" alt="Logo del Colegio" class="mx-auto h-24 w-24 rounded-full object-cover border-4 border-white shadow-md">
+                        <label for="logoUpload" class="custom-file-upload mt-2 text-sm font-medium text-gray-700">
+                            Cambiar Logo
+                        </label>
+                        <input type="file" id="logoUpload" accept="image/*">
+                    </div>
+                    <div class="flex-1 text-center md:text-left">
+                        <label for="schoolNameInput" class="block text-xs font-medium text-gray-500">Nombre del Colegio</label>
+                        <input type="text" id="schoolNameInput" value="Colegio Bilingüe Campo Real" class="form-input text-2xl font-bold text-gray-800 w-full border-0 border-b-2 border-gray-200 focus:ring-0 focus:border-blue-500 p-0">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+                    <div>
+                        <label for="teacherName" class="block text-sm font-medium text-gray-700">Nombre del Docente</label>
+                        <input type="text" id="teacherName" value="Elvis Enrique Santizo" class="form-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="grade" class="block text-sm font-medium text-gray-700">Grado</label>
+                        <input type="text" id="grade" value="8vo" class="form-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="section" class="block text-sm font-medium text-gray-700">Sección</label>
+                        <input type="text" id="section" value="A-B" class="form-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="area" class="block text-sm font-medium text-gray-700">Área</label>
+                        <input type="text" id="area" value="Tecnología" class="form-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="topic" class="block text-sm font-medium text-gray-700">Tema</label>
+                        <input type="text" id="topic" value="Ofimática Avanzada" class="form-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="unit" class="block text-sm font-medium text-gray-700">Unidad</label>
+                        <select id="unit" class="form-select mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            <option>PRIMERA UNIDAD</option>
+                            <option>SEGUNDA UNIDAD</option>
+                            <option>TERCERA UNIDAD</option>
+                            <option>CUARTA UNIDAD</option>
+                            <option>QUINTA UNIDAD</option>
+                            <option>SEXTA UNIDAD</option>
+                            <option>SÉPTIMA UNIDAD</option>
+                            <option>OCTAVA UNIDAD</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="startDate" class="block text-sm font-medium text-gray-700">Fecha de Inicio</label>
+                        <input type="date" id="startDate" value="2025-01-16" class="form-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label for="endDate" class="block text-sm font-medium text-gray-700">Fecha de Fin</label>
+                        <input type="date" id="endDate" value="2025-03-22" class="form-input mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de Contenidos -->
+            <section class="mt-8">
+                <h3 class="text-xl font-semibold mb-4">Detalle de la Planificación</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full responsive-table">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Competencias</th>
+                                <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Indicadores de Logro</th>
+                                <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contenidos (Declarativo, Procedimental, Actitudinal)</th>
+                                <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actividades (Aprendizaje, Evaluación)</th>
+                                <th class="p-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recursos</th>
+                                <th class="p-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="plan-table-body" class="bg-white divide-y divide-gray-200">
+                            <!-- Las filas se agregarán dinámicamente aquí -->
+                        </tbody>
+                    </table>
+                </div>
+                 <button id="addRowBtn" class="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                    </svg>
+                    Añadir Fila
+                </button>
+            </section>
+
+            <!-- Sección de Exportación -->
+            <section class="mt-8 border-t border-gray-200 pt-8">
+                <h3 class="text-xl font-semibold mb-4">Exportar Planificación</h3>
+                <div class="flex flex-wrap gap-4">
+                     <button id="exportPdfCarta" class="inline-flex items-center px-4 py-2 border border-red-300 text-sm font-medium rounded-md shadow-sm text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H4zm6 10a.75.75 0 000-1.5H7.5a.75.75 0 000 1.5H10zM10 6a.75.75 0 000 1.5h2.5a.75.75 0 000-1.5H10zM7.5 8.25a.75.75 0 000 1.5H10a.75.75 0 000-1.5H7.5z" clip-rule="evenodd" /></svg>
+                        PDF Carta (Horizontal)
+                    </button>
+                    <button id="exportPdfOficio" class="inline-flex items-center px-4 py-2 border border-red-300 text-sm font-medium rounded-md shadow-sm text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                         <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H4zm6 10a.75.75 0 000-1.5H7.5a.75.75 0 000 1.5H10zM10 6a.75.75 0 000 1.5h2.5a.75.75 0 000-1.5H10zM7.5 8.25a.75.75 0 000 1.5H10a.75.75 0 000-1.5H7.5z" clip-rule="evenodd" /></svg>
+                        PDF Oficio (Horizontal)
+                    </button>
+                    <button id="exportDocx" class="inline-flex items-center px-4 py-2 border border-blue-300 text-sm font-medium rounded-md shadow-sm text-blue-700 bg-blue-100 hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                         <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M3.75 3.75A1.75 1.75 0 002 5.5v9A1.75 1.75 0 003.75 16.25h12.5A1.75 1.75 0 0018 14.5v-9A1.75 1.75 0 0016.25 3.75H3.75zM8.5 6a.5.5 0 01.5.5v2.25H11a.5.5 0 01.5.5v1.5a.5.5 0 01-.5.5h-2.5v2.25a.5.5 0 01-1 0V11H5a.5.5 0 01-.5-.5v-1.5A.5.5 0 015 8.75h2.5V6.5a.5.5 0 01.5-.5z" /></svg>
+                        Exportar a Word (.doc)
+                    </button>
+                </div>
+            </section>
+
+        </main>
+        
+        <!-- Pie de página -->
+        <footer class="text-center mt-12 text-sm text-gray-500">
+            <p>&copy; <span id="copyright-year"></span> Todos los derechos reservados.</p>
+            <p>Diseñado con ❤️ por <a href="#" class="font-medium text-blue-600 hover:underline">Elvis Santizo</a></p>
+        </footer>
+
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- DATOS CURRICULARES (CNB Guatemala - Ampliado) ---
+            const curriculumData = {
+                "Área de Comunicación y Lenguaje": {
+                    "Competencias Primaria": ["Utiliza el lenguaje no verbal como apoyo a la comunicación.", "Expresa oralmente sus necesidades, intereses y experiencias.", "Lee textos de diverso tipo y nivel, con fluidez y comprensión."],
+                    "Competencias Básico": ["Se comunica en forma oral, escuchando y hablando en su idioma materno.", "Produce textos escritos con intención literaria.", "Utiliza el lenguaje como medio para informarse y transformar la realidad."],
+                    "Competencias Diversificado": ["Aplica estrategias de análisis del discurso.", "Redacta textos académicos y científicos con rigor y claridad.", "Analiza críticamente obras de la literatura universal y guatemalteca."]
+                },
+                "Área de Matemáticas": {
+                    "Competencias Primaria": ["Utiliza los números naturales en situaciones cotidianas.", "Describe formas y figuras geométricas en su entorno.", "Recolecta, organiza y representa datos."],
+                    "Competencias Básico": ["Resuelve problemas utilizando las propiedades de los números reales.", "Aplica conceptos de álgebra para modelar situaciones.", "Utiliza modelos matemáticos para representar y analizar relaciones."],
+                    "Competencias Diversificado": ["Aplica métodos de razonamiento lógico y matemático.", "Utiliza el cálculo infinitesimal para el análisis de funciones.", "Formula y verifica conjeturas basadas en la inferencia estadística."]
+                },
+                "Área de Ciencias Naturales": {
+                    "Competencias Primaria": ["Describe las características de los seres vivos.", "Relaciona la materia y la energía en los fenómenos naturales.", "Practica hábitos para la conservación de la salud."],
+                    "Competencias Básico": ["Explica la organización de la materia y la energía en los sistemas vivos.", "Aplica principios de la física y la química en la resolución de problemas.", "Promueve la sostenibilidad ambiental en su comunidad."],
+                    "Competencias Diversificado": ["Analiza procesos biológicos a nivel celular y molecular.", "Modela fenómenos físicos utilizando leyes y principios.", "Interpreta reacciones químicas y sus aplicaciones tecnológicas."]
+                },
+                 "Área de Ciencias Sociales y Formación Ciudadana": {
+                    "Competencias Primaria": ["Describe la organización de su familia y su comunidad.", "Reconoce la importancia de las normas para la convivencia.", "Narra acontecimientos de la historia de su comunidad."],
+                    "Competencias Básico": ["Interpreta procesos históricos que han configurado la sociedad guatemalteca.", "Promueve la participación ciudadana para la construcción de una sociedad democrática.", "Analiza las relaciones de poder que se establecen en la sociedad."],
+                    "Competencias Diversificado": ["Aplica métodos de investigación social para el análisis de la realidad.", "Evalúa el funcionamiento del sistema político de Guatemala.", "Propone soluciones a problemas sociales contemporáneos."]
+                },
+                "Área de Expresión Artística": {
+                    "Competencias Básico": ["Se expresa creativamente a través del teatro, la danza y la música.", "Aplica técnicas de las artes plásticas en sus creaciones.", "Valora las manifestaciones artísticas de diversas culturas."],
+                    "Competencias Diversificado": ["Gestiona proyectos artísticos y culturales.", "Analiza la estética y la teoría del arte.", "Crea obras artísticas que reflejan su visión del mundo."]
+                },
+                "Área de Productividad y Desarrollo": {
+                    "Competencias Básico": ["Utiliza la tecnología para mejorar su aprendizaje y productividad.", "Desarrolla emprendimientos que contribuyen al desarrollo comunitario.", "Aplica principios de gestión de calidad en sus proyectos."],
+                    "Competencias Diversificado": ["Diseña soluciones tecnológicas innovadoras.", "Administra proyectos de emprendimiento con visión de sostenibilidad.", "Aplica normas de seguridad e higiene industrial."]
+                },
+                "Área de Filosofía": {
+                    "Competencias Diversificado": ["Analiza problemas fundamentales de la existencia humana.", "Argumenta sus ideas con coherencia y rigor lógico.", "Evalúa diferentes corrientes de pensamiento filosófico."]
+                }
+            };
+
+            // --- ELEMENTOS DEL DOM ---
+            const addRowBtn = document.getElementById('addRowBtn');
+            const tableBody = document.getElementById('plan-table-body');
+            const logoUpload = document.getElementById('logoUpload');
+            const schoolLogo = document.getElementById('schoolLogo');
+            const copyrightYear = document.getElementById('copyright-year');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            const exportPdfCarta = document.getElementById('exportPdfCarta');
+            const exportPdfOficio = document.getElementById('exportPdfOficio');
+            const exportDocx = document.getElementById('exportDocx');
+
+
+            // --- FUNCIONES ---
+
+            /**
+             * Crea y añade una nueva fila a la tabla de planificación.
+             */
+            const addRow = () => {
+                const row = document.createElement('tr');
+                row.className = "plan-row";
+                const rowId = `row-${Date.now()}`;
+
+                let optionsHtml = '<option value="">Seleccione un área...</option>';
+                Object.keys(curriculumData).forEach(area => {
+                    optionsHtml += `<optgroup label="${area}">`;
+                    Object.keys(curriculumData[area]).forEach(nivel => {
+                        curriculumData[area][nivel].forEach(comp => {
+                            optionsHtml += `<option value="${comp}">${comp}</option>`;
+                        });
+                    });
+                    optionsHtml += `</optgroup>`;
+                });
+
+                row.innerHTML = `
+                    <td data-label="Competencias">
+                        <select class="competencia-select form-select mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                            ${optionsHtml}
+                        </select>
+                    </td>
+                    <td data-label="Indicadores">
+                        <textarea placeholder="Redacte los indicadores..." class="indicador-input form-textarea mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" rows="5"></textarea>
+                    </td>
+                    <td data-label="Contenidos">
+                         <textarea placeholder="Declarativo" class="form-textarea mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm mb-2" rows="2"></textarea>
+                         <textarea placeholder="Procedimental" class="form-textarea mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm mb-2" rows="2"></textarea>
+                         <textarea placeholder="Actitudinal" class="form-textarea mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" rows="2"></textarea>
+                    </td>
+                    <td data-label="Actividades">
+                        <textarea placeholder="De Aprendizaje" class="form-textarea mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm mb-2" rows="3"></textarea>
+                        <textarea placeholder="De Evaluación" class="form-textarea mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm" rows="3"></textarea>
+                    </td>
+                    <td data-label="Recursos">
+                         <textarea class="form-textarea mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500" rows="5"></textarea>
+                    </td>
+                    <td data-label="Acción" class="text-center">
+                        <button class="remove-row-btn text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-100 transition-colors">
+                            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.134-2.036-2.134H8.716C7.59 2.75 6.68 3.704 6.68 4.884v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                            </svg>
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+                updateEventListeners();
+                updateProgress();
+            };
+            
+            /**
+             * Ya no se usa, los indicadores son de texto libre ahora.
+             */
+            const updateIndicadores = (e) => {
+                // Función obsoleta, se mantiene por si se quiere reactivar.
+                updateProgress();
+            };
+
+            /**
+             * Maneja la subida y visualización de un nuevo logo.
+             * @param {Event} e - El evento de cambio del input file.
+             */
+            const handleLogoChange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        schoolLogo.src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            
+            /**
+             * Elimina una fila de la tabla.
+             * @param {Event} e - El evento de click del botón de eliminar.
+             */
+            const removeRow = (e) => {
+                const button = e.target.closest('.remove-row-btn');
+                if (button) {
+                    const row = button.closest('tr');
+                    row.remove();
+                    updateProgress();
+                }
+            };
+
+            /**
+             * Calcula y actualiza la barra de progreso.
+             */
+            const updateProgress = () => {
+                const allFormElements = document.querySelectorAll('.form-input, .form-select, .form-textarea, .competencia-select, .indicador-input');
+                const totalFields = allFormElements.length;
+                let filledFields = 0;
+
+                allFormElements.forEach(element => {
+                    if(element.tagName === 'TEXTAREA' && element.value.trim() !== '') {
+                        filledFields++;
+                    } else if (element.value && element.value.trim() !== '') {
+                         filledFields++;
+                    }
+                });
+
+                const progress = totalFields > 0 ? Math.round((filledFields / totalFields) * 100) : 0;
+                progressBar.style.width = `${progress}%`;
+                progressText.textContent = `${progress}%`;
+            };
+            
+            /**
+             * Exporta los datos a un archivo PDF.
+             * @param {string} pageSize - 'letter' u 'oficio'.
+             */
+            const exportPDF = (pageSize) => {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF({
+                    orientation: 'landscape',
+                    unit: 'mm',
+                    format: pageSize
+                });
+
+                const page_width = doc.internal.pageSize.getWidth();
+                const margin = 15;
+                const logoImg = document.getElementById('schoolLogo');
+                const schoolName = document.getElementById('schoolNameInput').value;
+                const generationDate = new Date();
+                const formattedDate = generationDate.toLocaleDateString('es-GT');
+                const formattedTime = generationDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+                const dateTimeString = `${formattedDate}, ${formattedTime}`;
+
+                // --- ENCABEZADO ---
+
+                // 1. Añadir Logo (sólo si es una imagen cargada y no el placeholder)
+                if (logoImg.src.startsWith('data:image')) {
+                    try {
+                        doc.addImage(logoImg.src, 'PNG', margin, margin, 20, 20); 
+                    } catch (e) {
+                        console.error("Error al añadir el logo al PDF:", e);
+                    }
+                }
+                
+                // 2. Título del Colegio
+                doc.setFontSize(18);
+                doc.setFont(undefined, 'bold');
+                doc.text(schoolName, margin + 25, margin + 12);
+                doc.setFont(undefined, 'normal');
+
+                // 3. Información del docente (distribuida en columnas)
+                const startY = margin + 25;
+                const lineHeight = 6;
+                doc.setFontSize(10);
+
+                // Columna Izquierda
+                doc.text(`Docente: ${document.getElementById('teacherName').value}`, margin, startY);
+                doc.text(`Grado: ${document.getElementById('grade').value}`, margin, startY + lineHeight);
+                doc.text(`Sección: ${document.getElementById('section').value}`, margin, startY + (lineHeight * 2));
+                
+                // Columna Derecha
+                const rightColumnX = page_width / 2;
+                doc.text(`Área: ${document.getElementById('area').value}`, rightColumnX, startY);
+                doc.text(`Tema: ${document.getElementById('topic').value}`, rightColumnX, startY + lineHeight);
+                doc.text(`Unidad: ${document.getElementById('unit').value}`, rightColumnX, startY + (lineHeight * 2));
+                doc.text(`Fechas: ${document.getElementById('startDate').value} al ${document.getElementById('endDate').value}`, rightColumnX, startY + (lineHeight * 3));
+                
+
+                // --- TABLA DE CONTENIDO ---
+                const tableStartY = startY + (lineHeight * 3) + 15; // Dejar espacio después del encabezado
+                const head = [['Competencia', 'Indicadores', 'Contenidos', 'Actividades', 'Recursos']];
+                const body = [];
+                document.querySelectorAll('#plan-table-body tr').forEach(row => {
+                    const rowData = [];
+                    rowData.push(row.querySelector('.competencia-select').value);
+                    rowData.push(row.querySelector('.indicador-input').value);
+                    const contenidos = Array.from(row.querySelectorAll('[data-label="Contenidos"] textarea')).map(t => `• ${t.placeholder}: ${t.value}`).join('\n');
+                    rowData.push(contenidos);
+                    const actividades = Array.from(row.querySelectorAll('[data-label="Actividades"] textarea')).map(t => `• ${t.placeholder}: ${t.value}`).join('\n');
+                    rowData.push(actividades);
+                    rowData.push(row.querySelector('[data-label="Recursos"] textarea').value);
+                    body.push(rowData);
+                });
+
+                doc.autoTable({
+                    head: head,
+                    body: body,
+                    startY: tableStartY,
+                    styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
+                    headStyles: { fillColor: [37, 99, 235], textColor: 255 },
+                    margin: { left: margin, right: margin },
+                    columnStyles: {
+                        0: { cellWidth: '25%' }, // Competencia
+                        1: { cellWidth: '25%' }, // Indicadores
+                        2: { cellWidth: '20%' }, // Contenidos
+                        3: { cellWidth: '20%' }, // Actividades
+                        4: { cellWidth: 'auto' }, // Recursos (se ajusta al espacio restante)
+                    },
+                    didDrawPage: function (data) {
+                        // --- ENCABEZADO SUPERIOR (FECHA Y HORA) ---
+                        doc.setFontSize(9);
+                        doc.setTextColor(100);
+                        // Izquierda: Fecha y Hora
+                        doc.text(dateTimeString, data.settings.margin.left, 10);
+                        // Derecha: Título
+                        const titleText = `Planificación Didáctica - ${document.getElementById('grade').value} ${document.getElementById('section').value}`;
+                        doc.text(titleText, page_width - data.settings.margin.right, 10, { align: 'right' });
+
+
+                        // --- PIE DE PÁGINA ---
+                        const footerText = `Generado el ${formattedDate} - ${schoolName}`;
+                        const pageHeight = doc.internal.pageSize.getHeight();
+                        doc.text(footerText, page_width / 2, pageHeight - 10, { align: 'center' });
+                    }
+                });
+
+                doc.save(`planificacion-${new Date().toISOString().slice(0,10)}.pdf`);
+            };
+
+            /**
+             * Exporta los datos a un archivo .doc (HTML formateado).
+             */
+            const exportDOCX = () => {
+                let content = `
+                    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                    <head><meta charset='utf-8'><title>Export</title>
+                    <style>
+                        @page { size: landscape; margin: 1in; }
+                        body { font-family: Calibri, sans-serif; }
+                        table { border-collapse: collapse; width: 100%; }
+                        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                    </style>
+                    </head><body>
+                `;
+                
+                content += `<h1>${document.getElementById('schoolNameInput').value}</h1>`;
+                content += `<p>
+                    <b>Docente:</b> ${document.getElementById('teacherName').value}<br/>
+                    <b>Grado:</b> ${document.getElementById('grade').value} | <b>Sección:</b> ${document.getElementById('section').value}<br/>
+                    <b>Área:</b> ${document.getElementById('area').value} | <b>Tema:</b> ${document.getElementById('topic').value}<br/>
+                    <b>Unidad:</b> ${document.getElementById('unit').value}<br/>
+                    <b>Fechas:</b> ${document.getElementById('startDate').value} al ${document.getElementById('endDate').value}
+                </p>`;
+
+                content += '<table><thead><tr><th>Competencia</th><th>Indicadores</th><th>Contenidos</th><th>Actividades</th><th>Recursos</th></tr></thead><tbody>';
+
+                 document.querySelectorAll('#plan-table-body tr').forEach(row => {
+                    content += '<tr>';
+                    content += `<td>${row.querySelector('.competencia-select').value.replace(/\n/g, '<br/>')}</td>`;
+                    content += `<td>${row.querySelector('.indicador-input').value.replace(/\n/g, '<br/>')}</td>`;
+                    const contenidos = Array.from(row.querySelectorAll('[data-label="Contenidos"] textarea')).map(t => t.value).join('<br/>---<br/>');
+                    content += `<td>${contenidos}</td>`;
+                    const actividades = Array.from(row.querySelectorAll('[data-label="Actividades"] textarea')).map(t => t.value).join('<br/>---<br/>');
+                    content += `<td>${actividades}</td>`;
+                    content += `<td>${row.querySelector('[data-label="Recursos"] textarea').value.replace(/\n/g, '<br/>')}</td>`;
+                    content += '</tr>';
+                });
+
+                content += '</tbody></table></body></html>';
+                
+                const blob = new Blob([content], { type: 'application/msword' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `planificacion-${new Date().toISOString().slice(0,10)}.doc`;
+                a.click();
+                URL.revokeObjectURL(url);
+            };
+
+
+            /**
+             * Actualiza los event listeners para toda la página, especialmente para elementos dinámicos.
+             */
+            const updateEventListeners = () => {
+                // Listeners para select de competencias
+                document.querySelectorAll('.competencia-select').forEach(select => {
+                    select.removeEventListener('change', updateIndicadores); // Evita duplicados
+                    select.addEventListener('change', updateIndicadores);
+                });
+                // Listeners para botones de eliminar fila
+                document.querySelectorAll('.remove-row-btn').forEach(btn => {
+                    btn.removeEventListener('click', removeRow); // Evita duplicados
+                    btn.addEventListener('click', removeRow);
+                });
+                // Listeners para todos los campos del formulario para actualizar progreso
+                document.querySelectorAll('input, select, textarea').forEach(element => {
+                    element.removeEventListener('input', updateProgress);
+                    element.addEventListener('input', updateProgress);
+                });
+            }
+
+            // --- INICIALIZACIÓN ---
+            
+            copyrightYear.textContent = new Date().getFullYear();
+            addRowBtn.addEventListener('click', addRow);
+            logoUpload.addEventListener('change', handleLogoChange);
+            exportPdfCarta.addEventListener('click', () => exportPDF('letter'));
+            exportPdfOficio.addEventListener('click', () => exportPDF('legal')); // 'legal' es el término para Oficio en jsPDF
+            exportDocx.addEventListener('click', exportDOCX);
+            
+            // Iniciar con una fila y actualizar todo
+            addRow();
+
+        });
+    </script>
+</body>
+</html>
+
+
+
+
