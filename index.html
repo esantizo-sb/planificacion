@@ -115,12 +115,12 @@
 <body class="text-gray-800">
 
     <div class="container mx-auto p-4 md:p-8">
-        
+
         <!-- Encabezado y Gamificación -->
         <header class="mb-8">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Planificador de Clases Dinámico</h1>
             <p class="text-gray-600 mt-2">Completa todos los campos para finalizar tu planificación. ¡Tú puedes!</p>
-            
+
             <div class="mt-4">
                 <label for="progress" class="block text-sm font-medium text-gray-700 mb-1">Progreso de Planificación</label>
                 <div class="progress-bar-container">
@@ -242,7 +242,7 @@
             </section>
 
         </main>
-        
+
         <!-- Pie de página -->
         <footer class="text-center mt-12 text-sm text-gray-500">
             <p>&copy; <span id="copyright-year"></span> Todos los derechos reservados.</p>
@@ -250,7 +250,7 @@
         </footer>
 
     </div>
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
@@ -289,8 +289,64 @@
                 },
                 "Área de Filosofía": {
                     "Competencias Diversificado": ["Analiza problemas fundamentales de la existencia humana.", "Argumenta sus ideas con coherencia y rigor lógico.", "Evalúa diferentes corrientes de pensamiento filosófico."]
+                },
+                "Área de Tecnología": {
+                    "Competencias Preprimaria": [
+                        "Describe características y propiedades del entorno utilizando información que recibe por medio de los sentidos y la kinestesia.",
+                        "Manifiesta coordinación óculo-manual en la realización de sus trabajos de la vida diaria.",
+                        "Produce textos escritos con diferentes intenciones comunicativas."
+                    ],
+                    "Competencias Primaria Etapa I": [
+                        "Identifica la presencia de tecnología como alternativa innovadora para la solución de problemas de su entorno inmediato.",
+                        "Utiliza información, de diferentes fuentes, que le facilita encontrar respuestas a su curiosidad natural y a la comprensión de su entorno.",
+                        "Aplica los conocimientos científicos y tecnológicos para resolver problemas de la vida cotidiana.",
+                        "Organiza la información de acuerdo con las características estructurales."
+                    ],
+                    "Competencias Primaria Etapa II": [
+                        "Describe los beneficios generados por el uso de la tecnología para el desarrollo de los Pueblos de Guatemala y el cuidado del medio ambiente.",
+                        "Aplica los conocimientos científicos y tecnológicos de manera crítica y creativa.",
+                        "Elabora textos de apoyo integrando datos obtenidos en las fuentes.",
+                        "Describe los beneficios generados por el uso de la tecnología.",
+                        "Produce textos escritos con diferentes intenciones comunicativas (informativa, narrativa, recreativa, literaria, entre otras) apegándose a las reglas de guardar, abrir, y crear nuevos conocimientos sobre la historia de la computadora.",
+                        "Ordena su espacio de trabajo en base a instrucciones, llevando un orden y dirección de objetos dentro y fuera del programa.",
+                        "Utiliza los conocimientos adquiridos para dar órdenes e instrucciones de una forma ordenada a distintas herramientas de este y otros programas.",
+                        "Utiliza estrategias de lectura con propósitos informativos.",
+                        "Identifica y reconoce las diferentes partes de la principal apariencia de Windows, entre ellos la diferencia de iconos.",
+                        "Reconoce la diferencia, entre los diferentes tipos de unidades y sus capacidades de almacenamiento de información.",
+                        "Administra información, basándose en medidas de almacenamiento y tipos de archivos."
+                    ],
+                    "Competencias Secundaria Primero Básico": [
+                        "Emplea los conocimientos y habilidades tecnológicas necesarios para realizar documentos digitales.",
+                        "Utiliza recursos digitales para la realización de materiales académicos de manera responsable.",
+                        "Emplea tecnologías colaborativas e interactivas en trabajos escolares de equipo."
+                    ],
+                    "Competencias Secundaria Segundo Básico": [
+                        "Aplica herramientas tecnológicas apropiadas, al ejecutar tareas específicas.",
+                        "Emplea información por medio de técnicas de investigación y manejo de datos.",
+                        "Crea recursos innovadores para comunicar información."
+                    ],
+                    "Competencias Secundaria Tercero Básico": [
+                        "Utiliza herramientas de productividad de manera autónoma para el desarrollo de proyectos.",
+                        "Analiza y evalúa información digital de fuentes confiables.",
+                        "Desarrolla proyectos colaborativos utilizando plataformas digitales."
+                    ],
+                    "Competencias Diversificado Cuarto Grado": [
+                        "Utiliza las tecnologías de la información y la comunicación para el manejo de la información, la comunicación y la resolución de problemas en distintos contextos.",
+                        "Explica las funciones básicas de un computador personal y su sistema operativo para una correcta operación.",
+                        "Emplea las TICs para estructurar, verificar, refinar y presentar la información en una forma adecuada para su procesamiento y presentación para diversos propósitos y audiencias específicas.",
+                        "Selecciona las fuentes adecuadas de información y herramientas de las TICs para tareas específicas.",
+                        "Clasifica paquetes de software y los modelos basados en las TICs."
+                    ],
+                    "Competencias Diversificado Quinto Grado": [
+                        "Aplica las tecnologías de la información y la comunicación de manera creativa y crítica para el manejo de la información, la comunicación y la resolución de problemas complejos en distintos contextos.",
+                        "Usa los navegadores de Internet (navegar, almacenar, recuperar, clasificar e imprimir información).",
+                        "Utiliza los buscadores para localizar información específica en Internet.",
+                        "Envía y recibe mensajes de correo electrónico, organiza la libreta de direcciones y sabe adjuntar archivos."
+                    ]
                 }
             };
+
+
 
             // --- ELEMENTOS DEL DOM ---
             const addRowBtn = document.getElementById('addRowBtn');
@@ -359,7 +415,7 @@
                 updateEventListeners();
                 updateProgress();
             };
-            
+
             /**
              * Ya no se usa, los indicadores son de texto libre ahora.
              */
@@ -382,7 +438,7 @@
                     reader.readAsDataURL(file);
                 }
             };
-            
+
             /**
              * Elimina una fila de la tabla.
              * @param {Event} e - El evento de click del botón de eliminar.
@@ -416,7 +472,7 @@
                 progressBar.style.width = `${progress}%`;
                 progressText.textContent = `${progress}%`;
             };
-            
+
             /**
              * Exporta los datos a un archivo PDF.
              * @param {string} pageSize - 'letter' u 'oficio'.
@@ -440,50 +496,45 @@
 
                 // --- ENCABEZADO ---
 
-                // 1. Añadir Logo (sólo si es una imagen cargada y no el placeholder)
                 if (logoImg.src.startsWith('data:image')) {
                     try {
-                        doc.addImage(logoImg.src, 'PNG', margin, margin, 20, 20); 
+                        doc.addImage(logoImg.src, 'PNG', margin, margin, 20, 20);
                     } catch (e) {
                         console.error("Error al añadir el logo al PDF:", e);
                     }
                 }
-                
-                // 2. Título del Colegio
+
                 doc.setFontSize(18);
                 doc.setFont(undefined, 'bold');
                 doc.text(schoolName, margin + 25, margin + 12);
                 doc.setFont(undefined, 'normal');
 
-                // 3. Información del docente (distribuida en columnas)
                 const startY = margin + 25;
                 const lineHeight = 6;
                 doc.setFontSize(10);
 
-                // Columna Izquierda
                 doc.text(`Docente: ${document.getElementById('teacherName').value}`, margin, startY);
                 doc.text(`Grado: ${document.getElementById('grade').value}`, margin, startY + lineHeight);
                 doc.text(`Sección: ${document.getElementById('section').value}`, margin, startY + (lineHeight * 2));
-                
-                // Columna Derecha
+
                 const rightColumnX = page_width / 2;
                 doc.text(`Área: ${document.getElementById('area').value}`, rightColumnX, startY);
                 doc.text(`Tema: ${document.getElementById('topic').value}`, rightColumnX, startY + lineHeight);
                 doc.text(`Unidad: ${document.getElementById('unit').value}`, rightColumnX, startY + (lineHeight * 2));
                 doc.text(`Fechas: ${document.getElementById('startDate').value} al ${document.getElementById('endDate').value}`, rightColumnX, startY + (lineHeight * 3));
-                
+
 
                 // --- TABLA DE CONTENIDO ---
-                const tableStartY = startY + (lineHeight * 3) + 15; // Dejar espacio después del encabezado
+                const tableStartY = startY + (lineHeight * 3) + 15;
                 const head = [['Competencia', 'Indicadores', 'Contenidos', 'Actividades', 'Recursos']];
                 const body = [];
                 document.querySelectorAll('#plan-table-body tr').forEach(row => {
                     const rowData = [];
                     rowData.push(row.querySelector('.competencia-select').value);
                     rowData.push(row.querySelector('.indicador-input').value);
-                    const contenidos = Array.from(row.querySelectorAll('[data-label="Contenidos"] textarea')).map(t => `• ${t.placeholder}: ${t.value}`).join('\n');
+                    const contenidos = Array.from(row.querySelectorAll('[data-label="Contenidos"] textarea')).map(t => `• ${t.placeholder}:\n${t.value}`).join('\n\n');
                     rowData.push(contenidos);
-                    const actividades = Array.from(row.querySelectorAll('[data-label="Actividades"] textarea')).map(t => `• ${t.placeholder}: ${t.value}`).join('\n');
+                    const actividades = Array.from(row.querySelectorAll('[data-label="Actividades"] textarea')).map(t => `• ${t.placeholder}:\n${t.value}`).join('\n\n');
                     rowData.push(actividades);
                     rowData.push(row.querySelector('[data-label="Recursos"] textarea').value);
                     body.push(rowData);
@@ -493,28 +544,31 @@
                     head: head,
                     body: body,
                     startY: tableStartY,
-                    styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
-                    headStyles: { fillColor: [37, 99, 235], textColor: 255 },
+                    styles: {
+                        fontSize: 7,
+                        cellPadding: 2,
+                        overflow: 'linebreak'
+                    },
+                    headStyles: {
+                        fillColor: [37, 99, 235],
+                        textColor: 255,
+                        fontSize: 8
+                    },
                     margin: { left: margin, right: margin },
                     columnStyles: {
-                        0: { cellWidth: '25%' }, // Competencia
-                        1: { cellWidth: '25%' }, // Indicadores
-                        2: { cellWidth: '20%' }, // Contenidos
-                        3: { cellWidth: '20%' }, // Actividades
-                        4: { cellWidth: 'auto' }, // Recursos (se ajusta al espacio restante)
+                        0: { cellWidth: '22%' },
+                        1: { cellWidth: '22%' },
+                        2: { cellWidth: '22%' },
+                        3: { cellWidth: '22%' },
+                        4: { cellWidth: 'auto' }
                     },
                     didDrawPage: function (data) {
-                        // --- ENCABEZADO SUPERIOR (FECHA Y HORA) ---
                         doc.setFontSize(9);
                         doc.setTextColor(100);
-                        // Izquierda: Fecha y Hora
                         doc.text(dateTimeString, data.settings.margin.left, 10);
-                        // Derecha: Título
                         const titleText = `Planificación Didáctica - ${document.getElementById('grade').value} ${document.getElementById('section').value}`;
                         doc.text(titleText, page_width - data.settings.margin.right, 10, { align: 'right' });
 
-
-                        // --- PIE DE PÁGINA ---
                         const footerText = `Generado el ${formattedDate} - ${schoolName}`;
                         const pageHeight = doc.internal.pageSize.getHeight();
                         doc.text(footerText, page_width / 2, pageHeight - 10, { align: 'center' });
@@ -528,21 +582,45 @@
              * Exporta los datos a un archivo .doc (HTML formateado).
              */
             const exportDOCX = () => {
-                let content = `
-                    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-                    <head><meta charset='utf-8'><title>Export</title>
-                    <style>
-                        @page { size: landscape; margin: 1in; }
-                        body { font-family: Calibri, sans-serif; }
-                        table { border-collapse: collapse; width: 100%; }
-                        th, td { border: 1px solid black; padding: 8px; text-align: left; }
-                        th { background-color: #f2f2f2; }
-                    </style>
-                    </head><body>
-                `;
+                let preHtml = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'><title>Export</title>";
                 
-                content += `<h1>${document.getElementById('schoolNameInput').value}</h1>`;
-                content += `<p>
+                let styles = `
+                    <style>
+                        @page {
+                            size: landscape;
+                            margin: 2cm;
+                        }
+                        body {
+                            font-family: Calibri, sans-serif;
+                            font-size: 10pt;
+                        }
+                        table {
+                            border-collapse: collapse;
+                            width: 100%;
+                            table-layout: fixed; /* Clave para que la tabla respete el ancho */
+                        }
+                        th, td {
+                            border: 1px solid black;
+                            padding: 8px;
+                            text-align: left;
+                            word-wrap: break-word; /* Clave para que el texto largo se divida */
+                            vertical-align: top;
+                        }
+                        th {
+                            background-color: #e0e0e0;
+                            font-weight: bold;
+                        }
+                        h1, p {
+                            margin-bottom: 12px;
+                        }
+                    </style>
+                `;
+
+                let head = "</head><body>";
+                let body = "";
+
+                body += `<h1>${document.getElementById('schoolNameInput').value}</h1>`;
+                body += `<p>
                     <b>Docente:</b> ${document.getElementById('teacherName').value}<br/>
                     <b>Grado:</b> ${document.getElementById('grade').value} | <b>Sección:</b> ${document.getElementById('section').value}<br/>
                     <b>Área:</b> ${document.getElementById('area').value} | <b>Tema:</b> ${document.getElementById('topic').value}<br/>
@@ -550,29 +628,59 @@
                     <b>Fechas:</b> ${document.getElementById('startDate').value} al ${document.getElementById('endDate').value}
                 </p>`;
 
-                content += '<table><thead><tr><th>Competencia</th><th>Indicadores</th><th>Contenidos</th><th>Actividades</th><th>Recursos</th></tr></thead><tbody>';
+                body += '<table width="100%"><thead><tr>' +
+                    '<th style="width:22%;">Competencia</th>' +
+                    '<th style="width:22%;">Indicadores</th>' +
+                    '<th style="width:22%;">Contenidos</th>' +
+                    '<th style="width:22%;">Actividades</th>' +
+                    '<th style="width:auto;">Recursos</th>' +
+                    '</tr></thead><tbody>';
 
-                 document.querySelectorAll('#plan-table-body tr').forEach(row => {
-                    content += '<tr>';
-                    content += `<td>${row.querySelector('.competencia-select').value.replace(/\n/g, '<br/>')}</td>`;
-                    content += `<td>${row.querySelector('.indicador-input').value.replace(/\n/g, '<br/>')}</td>`;
-                    const contenidos = Array.from(row.querySelectorAll('[data-label="Contenidos"] textarea')).map(t => t.value).join('<br/>---<br/>');
-                    content += `<td>${contenidos}</td>`;
-                    const actividades = Array.from(row.querySelectorAll('[data-label="Actividades"] textarea')).map(t => t.value).join('<br/>---<br/>');
-                    content += `<td>${actividades}</td>`;
-                    content += `<td>${row.querySelector('[data-label="Recursos"] textarea').value.replace(/\n/g, '<br/>')}</td>`;
-                    content += '</tr>';
+                document.querySelectorAll('#plan-table-body tr').forEach(row => {
+                    const formatCellContent = (text) => {
+                        return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br/>');
+                    };
+
+                    const competencia = formatCellContent(row.querySelector('.competencia-select').value);
+                    const indicadores = formatCellContent(row.querySelector('.indicador-input').value);
+                    
+                    const contenidos = Array.from(row.querySelectorAll('[data-label="Contenidos"] textarea'))
+                                            .map(t => `<b>${t.placeholder}:</b><br/>${formatCellContent(t.value)}`)
+                                            .join('<br/><hr style="border:0; border-top:1px dotted #ccc;"/><br/>');
+
+                    const actividades = Array.from(row.querySelectorAll('[data-label="Actividades"] textarea'))
+                                             .map(t => `<b>${t.placeholder}:</b><br/>${formatCellContent(t.value)}`)
+                                             .join('<br/><hr style="border:0; border-top:1px dotted #ccc;"/><br/>');
+
+                    const recursos = formatCellContent(row.querySelector('[data-label="Recursos"] textarea').value);
+                    
+                    body += '<tr>';
+                    body += `<td>${competencia}</td>`;
+                    body += `<td>${indicadores}</td>`;
+                    body += `<td>${contenidos}</td>`;
+                    body += `<td>${actividades}</td>`;
+                    body += `<td>${recursos}</td>`;
+                    body += '</tr>';
                 });
 
-                content += '</tbody></table></body></html>';
+                body += '</tbody></table>';
+
+                let postHtml = '</body></html>';
+                let html = preHtml + styles + head + body + postHtml;
+
+                const blob = new Blob(['\ufeff', html], {
+                    type: 'application/msword'
+                });
                 
-                const blob = new Blob([content], { type: 'application/msword' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
                 a.download = `planificacion-${new Date().toISOString().slice(0,10)}.doc`;
                 a.click();
-                URL.revokeObjectURL(url);
+                
+                setTimeout(() => {
+                    URL.revokeObjectURL(url);
+                }, 100);
             };
 
 
@@ -580,17 +688,14 @@
              * Actualiza los event listeners para toda la página, especialmente para elementos dinámicos.
              */
             const updateEventListeners = () => {
-                // Listeners para select de competencias
                 document.querySelectorAll('.competencia-select').forEach(select => {
-                    select.removeEventListener('change', updateIndicadores); // Evita duplicados
+                    select.removeEventListener('change', updateIndicadores);
                     select.addEventListener('change', updateIndicadores);
                 });
-                // Listeners para botones de eliminar fila
                 document.querySelectorAll('.remove-row-btn').forEach(btn => {
-                    btn.removeEventListener('click', removeRow); // Evita duplicados
+                    btn.removeEventListener('click', removeRow);
                     btn.addEventListener('click', removeRow);
                 });
-                // Listeners para todos los campos del formulario para actualizar progreso
                 document.querySelectorAll('input, select, textarea').forEach(element => {
                     element.removeEventListener('input', updateProgress);
                     element.addEventListener('input', updateProgress);
@@ -598,22 +703,17 @@
             }
 
             // --- INICIALIZACIÓN ---
-            
+
             copyrightYear.textContent = new Date().getFullYear();
             addRowBtn.addEventListener('click', addRow);
             logoUpload.addEventListener('change', handleLogoChange);
             exportPdfCarta.addEventListener('click', () => exportPDF('letter'));
             exportPdfOficio.addEventListener('click', () => exportPDF('legal')); // 'legal' es el término para Oficio en jsPDF
             exportDocx.addEventListener('click', exportDOCX);
-            
-            // Iniciar con una fila y actualizar todo
+
             addRow();
 
         });
     </script>
 </body>
 </html>
-
-
-
-
